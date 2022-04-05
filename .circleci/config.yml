@@ -1,0 +1,26 @@
+version: 2.1
+
+orbs:
+  torque: quali/torque@1.0.0
+  aws-s3: circleci/aws-s3@1.0.11
+jobs:
+  test:
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - torque/start-sandbox:
+          sandbox-name: "circleci-test"
+          blueprint: "promotions-manager-all-aws-dev"
+          inputs: "{'AWS_INSTANCE_TYPE': 'm5.large','PORT':'3000','API_PORT':'3001', 'RELEASE_NUMBER':'none', 'API_BUILD_NUMBER':'none'}"
+          artifacts: "{'promotions-manager-ui':'artifacts/latest/promotions-manager-ui.master.tar.gz','promotions-manager-api':'artifacts/latest/promotions-manager-api.master.tar.gz', 'mongodb': 'artifacts/test-data/test-data-db.tar' }"
+      - run:
+          name: Functional test
+          command: |
+            SB_ENDPOINT="SB_${SANDBOX_ID}_SHORTCUT_1"
+            echo "Checking Sandbox ${!SB_ENDPOINT}"
+      - torque/end-sandbox:
+          sandbox-id: SANDBOX_ID
+workflows:
+  testpromotionmanager:
+    jobs:
+      - test
