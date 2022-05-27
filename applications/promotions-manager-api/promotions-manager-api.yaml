@@ -40,7 +40,7 @@ source:
         region: eu-west-1
         username: ubuntu
       - id: ami-0565af6e282977273
-        region: us-east-1
+        region: eu-west-2
         username: ubuntu
   os_type: linux
 spec_version: 1
